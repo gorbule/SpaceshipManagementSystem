@@ -2,6 +2,7 @@ package com.example.spaceshipmanagementsystem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -43,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Username or password is empty", Toast.LENGTH_LONG).show();
         } else if (username.equals("Alexandra")&&password.equals("0000")) {
             Toast.makeText(this, "Login was sucesful", Toast.LENGTH_LONG).show();
+            Intent welcome = new Intent(LoginActivity.this,WelcomeActivity.class);
+            startActivity(welcome);
         } else {
             Toast.makeText(this, "Username or password is incorrect", Toast.LENGTH_LONG).show();
         }

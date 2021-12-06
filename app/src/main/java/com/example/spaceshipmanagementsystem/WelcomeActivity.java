@@ -1,51 +1,93 @@
 package com.example.spaceshipmanagementsystem;
 
-import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.View;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.provider.BaseColumns;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import com.example.spaceshipmanagementsystem.db.SqlLiteHelper;
 
-import com.example.spaceshipmanagementsystem.databinding.ActivityWelcomeBinding;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityWelcomeBinding binding;
+    private ListView shipList;
+
+    //Data management variable
+    List<String> shipsFromDb = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_welcome);
 
-        binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        SqlLiteHelper dbHelper = new SqlLiteHelper(this);
 
-        setSupportActionBar(binding.toolbar);
+        //TODO: Move code to own method
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_welcome);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+//        shipsFromDb.add("Loud and Proud");
+//        shipsFromDb.add("Escape Plan");
+//        shipsFromDb.add("Flat Earth");
+//        shipsFromDb.add("Star Trek");
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-    }
+        String title = "Loud and Proud";
+        String mass = "100000";
+        String mycolor = "Red";
+        String location = "Daugavpils, Latvia";
+        String image = "***IMAGE***";
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_welcome);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+        // Gets the data repository in write mode
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        // Create a new map of values, where column names are the keys
+        ContentValues values = new ContentValues();
+        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_TITLE, title);
+        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_MASS, mass);
+        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_COLOR, mycolor);
+        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_LOCATION, location);
+        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_IMAGE_URL, image);
+
+        // Insert the new row, returning the primary key value of the new row
+        long newRowId = db.insert(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.TABLE_NAME, null, values);
+
+        SQLiteDatabase readDb = dbHelper.getReadableDatabase();
+
+        // Define a projection that specifies which columns from the database
+        String[] projection = {
+                BaseColumns._ID,
+                SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_TITLE
+        };
+
+        Cursor cursor = db.query(
+                SqlLiteHelper.FeedReaderContract.SpaceshipEntry.TABLE_NAME,   // The table to query
+                projection,             // The array of columns to return (pass null to get all)
+                null,              // The columns for the WHERE clause
+                null,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                null               // The sort order
+        );
+
+        while(cursor.moveToNext()) {
+            String myTitle = cursor.getString(cursor.getColumnIndexOrThrow
+                    (SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_TITLE));
+            shipsFromDb.add(myTitle);
+        }
+        cursor.close();
+
+        //Reference to the Layout - shipList element
+        shipList = (ListView) findViewById(R.id.shipList);
+
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                this,
+                android.R.layout.simple_list_item_1,
+                shipsFromDb);
+        shipList.setAdapter(arrayAdapter);
     }
 }

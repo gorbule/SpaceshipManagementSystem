@@ -11,9 +11,7 @@
         android:theme="@style/Theme.SpaceshipManagementSystem">
         <activity
             android:name=".WelcomeActivity"
-            android:exported="false"
-            android:label="@string/title_activity_welcome"
-            android:theme="@style/Theme.SpaceshipManagementSystem.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
