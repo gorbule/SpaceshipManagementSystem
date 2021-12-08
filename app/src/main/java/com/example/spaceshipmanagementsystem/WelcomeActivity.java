@@ -42,30 +42,30 @@ public class WelcomeActivity extends AppCompatActivity {
         String location = "Daugavpils, Latvia";
         String image = "***IMAGE***";
 
-        // Gets the data repository in write mode
+        // Getting the data repository in write mode
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        // Create a new map of values, where column names are the keys
+        // Creating a new map of values, where column names are the keys
         ContentValues values = new ContentValues();
-        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_TITLE, title);
-        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_MASS, mass);
-        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_COLOR, mycolor);
-        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_LOCATION, location);
-        values.put(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_IMAGE_URL, image);
+        values.put(SqlLiteHelper.SpaceshipEntry.COLUMN_NAME_TITLE, title);
+        values.put(SqlLiteHelper.SpaceshipEntry.COLUMN_NAME_MASS, mass);
+        values.put(SqlLiteHelper.SpaceshipEntry.COLUMN_NAME_COLOR, mycolor);
+        values.put(SqlLiteHelper.SpaceshipEntry.COLUMN_NAME_LOCATION, location);
+        values.put(SqlLiteHelper.SpaceshipEntry.COLUMN_NAME_IMAGE_URL, image);
 
-        // Insert the new row, returning the primary key value of the new row
-        long newRowId = db.insert(SqlLiteHelper.FeedReaderContract.SpaceshipEntry.TABLE_NAME, null, values);
+        // Inserting the new row, returning the primary key value of the new row
+        long newRowId = db.insert(SqlLiteHelper.SpaceshipEntry.TABLE_NAME, null, values);
 
         SQLiteDatabase readDb = dbHelper.getReadableDatabase();
 
-        // Define a projection that specifies which columns from the database
+        // Defining a projection that specifies which columns from the database
         String[] projection = {
                 BaseColumns._ID,
-                SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_TITLE
+                SqlLiteHelper.SpaceshipEntry.COLUMN_NAME_TITLE
         };
 
         Cursor cursor = db.query(
-                SqlLiteHelper.FeedReaderContract.SpaceshipEntry.TABLE_NAME,   // The table to query
+                SqlLiteHelper.SpaceshipEntry.TABLE_NAME,   // The table to query
                 projection,             // The array of columns to return (pass null to get all)
                 null,              // The columns for the WHERE clause
                 null,          // The values for the WHERE clause
@@ -76,7 +76,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         while(cursor.moveToNext()) {
             String myTitle = cursor.getString(cursor.getColumnIndexOrThrow
-                    (SqlLiteHelper.FeedReaderContract.SpaceshipEntry.COLUMN_NAME_TITLE));
+                    (SqlLiteHelper.SpaceshipEntry.COLUMN_NAME_TITLE));
             shipsFromDb.add(myTitle);
         }
         cursor.close();
